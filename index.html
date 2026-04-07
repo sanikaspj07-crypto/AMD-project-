@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Future Self Simulator | Neural Engine</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="background-orbs">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+    
+    <main class="container">
+        <header>
+            <h1>Future Self <span>Simulator</span></h1>
+            <p>Experience the compounding power of your daily habits.</p>
+        </header>
+
+        <div class="app-layout">
+            <section class="glass-card input-section" data-tilt data-tilt-max="2" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.1">
+                <h2>Your Daily Habits</h2>
+                
+                <div class="input-group">
+                    <label for="study">📚 Deep Work / Study (Daily)</label>
+                    <input type="range" id="study" min="0" max="16" value="4" step="0.5">
+                    <div class="val-display"><span id="study-val">4</span> hrs</div>
+                </div>
+
+                <div class="input-group">
+                    <label for="screen">📱 Distractive Screen Time</label>
+                    <input type="range" id="screen" min="0" max="16" value="5" step="0.5">
+                    <div class="val-display"><span id="screen-val">5</span> hrs</div>
+                </div>
+
+                <div class="input-group">
+                    <label for="sleep">💤 Sleep Recovery</label>
+                    <input type="range" id="sleep" min="0" max="14" value="7" step="0.5">
+                    <div class="val-display"><span id="sleep-val">7</span> hrs</div>
+                </div>
+
+                <div class="input-group">
+                    <label for="consistency">🔄 Habit Consistency</label>
+                    <div class="toggle-group">
+                        <input type="radio" id="cons-low" name="consistency" value="low">
+                        <label for="cons-low">Low</label>
+                        <input type="radio" id="cons-medium" name="consistency" value="medium" checked>
+                        <label for="cons-medium">Med</label>
+                        <input type="radio" id="cons-high" name="consistency" value="high">
+                        <label for="cons-high">High</label>
+                    </div>
+                </div>
+
+                <div class="input-group highlight-group">
+                    <label for="years">⏳ Time Horizon (Years)</label>
+                    <input type="range" id="years" min="1" max="10" value="1" step="1">
+                    <div class="val-display"><span id="years-val">1</span> year(s) from now</div>
+                    <small class="hint-text">See how habits compound over time!</small>
+                </div>
+
+                <button id="predict-btn" class="glow-btn">Simulate My Future</button>
+            </section>
+
+            <section class="glass-card result-section hidden" id="result-section" data-tilt data-tilt-max="1" data-tilt-speed="400">
+                <div class="ai-header">
+                    <h2>Neural Prediction Engine</h2>
+                    <span class="ai-status">System Active</span>
+                </div>
+                
+                <div class="persona-card" id="persona-card">
+                    <div class="persona-header">
+                        <span class="persona-badge" id="persona-badge">Analyzing...</span>
+                        <h3 id="persona-name">Generating Profile...</h3>
+                    </div>
+                    <p id="persona-desc" class="typing-effect">Please wait, compiling temporal data...</p>
+                </div>
+
+                <div class="score-container">
+                    <div class="score-circle">
+                        <span id="final-score">0</span>
+                        <span class="score-label">Future Score</span>
+                    </div>
+                    <div class="charts-wrapper" style="flex: 1;">
+                        <div class="chart-box">
+                            <canvas id="lineChart" height="150"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="suggestions-box">
+                    <h3>💡 AI Intervention Strategy</h3>
+                    <ul id="suggestions-list">
+                        <!-- Populated by JS -->
+                    </ul>
+                </div>
+                
+                <button id="reset-btn" class="secondary-btn">Recalibrate Variables</button>
+            </section>
+        </div>
+    </main>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
