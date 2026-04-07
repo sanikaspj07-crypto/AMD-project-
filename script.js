@@ -1,220 +1,176 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // --- Initializing Inputs ---
-    const inputs = ['study', 'screen', 'sleep', 'years'];
-    const elements = {};
+document.addEventListener("DOMContentLoaded", () => {
     
-    inputs.forEach(id => {
-        elements[id] = document.getElementById(id);
-        elements[`${id}Val`] = document.getElementById(`${id}-val`);
-        elements[id].addEventListener('input', () => {
-            elements[`${id}Val`].textContent = elements[id].value;
-            // Immediate feedback on UI change (optional but cool)
-            if(!document.getElementById('result-section').classList.contains('hidden')){
-                calculateCompoundEffect(); // auto recalc if already shown
+    // Simple mock database using localStorage to persist users between pages
+    const dbUsers = JSON.parse(localStorage.getItem("foodAiUsers")) || [];
+    
+    // ==========================================
+    // 1. LOGIN PAGE LOGIC
+    // ==========================================
+    const loginForm = document.getElementById("login-form");
+    if (loginForm) {
+        loginForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const email = document.getElementById("login-email").value.trim();
+            const password = document.getElementById("login-password").value;
+            const errorElement = document.getElementById("login-error");
+
+            // Validate against stored users
+            const user = dbUsers.find(u => u.email === email && u.password === password);
+            if (user) {
+                localStorage.setItem("currentUser", JSON.stringify(user));
+                window.location.href = "dashboard.html";
+            } else {
+                errorElement.textContent = "Invalid email or password.";
             }
         });
-    });
+    }
 
-    const resultSection = document.getElementById('result-section');
-    let lineChart;
-    let typeTimeout;
+    // ==========================================
+    // 2. SIGNUP PAGE LOGIC
+    // ==========================================
+    const signupForm = document.getElementById("signup-form");
+    if (signupForm) {
+        signupForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const name = document.getElementById("signup-name").value.trim();
+            const email = document.getElementById("signup-email").value.trim();
+            const password = document.getElementById("signup-password").value;
+            const errorElement = document.getElementById("signup-error");
 
-    const generatePersona = (study, screen, sleep, consistency) => {
-        if (study >= 8 && sleep < 6) {
-            return {
-                name: "The Burnout Martyr 🕯️",
-                desc: "Sacrificing your health for productivity. In the short term, you achieve a lot. But long-term exhaustion leads to a forced crash.",
-                color: "#f59e0b"
-            };
-        }
-        if (study >= 6 && screen <= 3 && sleep >= 7 && (consistency === 'high' || consistency === 'medium')) {
-            return {
-                name: "The Elite Architect 👑",
-                desc: "Pinnacle of discipline. You treat your life like a masterpiece. This compounding effect makes you virtually unstoppable.",
-                color: "#10b981"
-            };
-        }
-        if (screen >= 7 && study <= 3) {
-            return {
-                name: "The Digital Ghost 👻",
-                desc: "Trapped in the dopamine loop. Your potential is being slowly drained by algorithms. Focus diminishes drastically.",
-                color: "#ef4444"
-            };
-        }
-        if (consistency === 'low') {
-            return {
-                name: "The False Starter 🚦",
-                desc: "Bursts of intense inspiration followed by weeks of inaction. This shatters the compounding effect.",
-                color: "#f59e0b"
-            };
-        }
-        if (study >= 4 && screen <= 5 && sleep >= 6) {
-            return {
-                name: "The Steady Climber ⛰️",
-                desc: "Excellent balance. Not extreme in any direction, but your sustainable habits ensure gradual, guaranteed upward progress.",
-                color: "#06b6d4"
-            };
-        }
-        return {
-            name: "The Average Drifter 🛋️",
-            desc: "You take the path of least resistance. You aren't destroying your future, but you aren't actively building it either.",
-            color: "#94a3b8"
-        };
-    };
-
-    const typeText = (element, text, speed = 25) => {
-        element.textContent = '';
-        clearTimeout(typeTimeout);
-        let i = 0;
-        const typeWriter = () => {
-            if (i < text.length) {
-                element.textContent += text.charAt(i);
-                i++;
-                typeTimeout = setTimeout(typeWriter, speed);
+            if (dbUsers.find(u => u.email === email)) {
+                errorElement.textContent = "Email already registered.";
+                return;
             }
-        }
-        typeWriter();
-    };
 
-    const calculateCompoundEffect = () => {
-        const study = parseFloat(elements.study.value);
-        const screen = parseFloat(elements.screen.value);
-        const sleep = parseFloat(elements.sleep.value);
-        const years = parseInt(elements.years.value);
-        const consistency = document.querySelector('input[name="consistency"]:checked').value;
-        
-        // Calculate Base Yearly Growth Rate
-        let yearlyImpact = 0;
-        
-        // Study impact
-        if (study >= 2) yearlyImpact += (study - 2) * 2; 
-        else yearlyImpact -= 3;
-
-        // Screen time impact
-        if (screen > 4) yearlyImpact -= Math.pow(screen - 4, 1.4);
-        else yearlyImpact += 2;
-
-        // Sleep impact 
-        const sleepDev = Math.abs(sleep - 8);
-        if (sleep < 7) yearlyImpact -= (sleepDev * 2.5);
-        else if (sleep >= 7 && sleep <= 9) yearlyImpact += 3;
-
-        // Consistency multiplier
-        let conMult = 1;
-        if (consistency === 'high') conMult = 1.3;
-        if (consistency === 'low') conMult = 0.5;
-        
-        // Apply consistency 
-        if (yearlyImpact > 0) yearlyImpact *= conMult;
-        else if (consistency === 'low') yearlyImpact *= 1.4; // bad habits + low consistency = ruin
-
-        let currentScore = 50;
-        const labels = ['Now'];
-        const dataPoints = [currentScore];
-
-        for (let i = 1; i <= years; i++) {
-            // Apply compound calculation: Score += yearly impact * compound modifier
-            const compoundModifier = 1 + (i * 0.05);
-            currentScore += (yearlyImpact * compoundModifier);
-            if(currentScore < 0) currentScore = 0;
-            if(currentScore > 100) currentScore = 100;
+            // Create user and auto-login
+            const newUser = { name, email, password };
+            dbUsers.push(newUser);
+            localStorage.setItem("foodAiUsers", JSON.stringify(dbUsers));
+            localStorage.setItem("currentUser", JSON.stringify(newUser));
             
-            labels.push(`Yr ${i}`);
-            dataPoints.push(Math.round(currentScore));
+            window.location.href = "dashboard.html";
+        });
+    }
+
+    // ==========================================
+    // 3. DASHBOARD LOGIC
+    // ==========================================
+    const dashboardContainer = document.getElementById("dashboard-container");
+    if (dashboardContainer) {
+        // Authenticate check
+        const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+        if (!currentUser) {
+            window.location.href = "login.html"; // Protect route
+            return;
         }
 
-        const finalScore = Math.round(currentScore);
-        
-        // UI Updates
-        resultSection.classList.remove('hidden');
-        document.getElementById('final-score').textContent = finalScore;
-        
-        // Personas
-        const persona = generatePersona(study, screen, sleep, consistency);
-        document.getElementById('persona-badge').textContent = `AI Profile Match (Year ${years})`;
-        document.getElementById('persona-name').textContent = persona.name;
-        document.getElementById('persona-name').style.color = persona.color;
-        
-        typeText(document.getElementById('persona-desc'), persona.desc, 30);
+        // Set personalized welcome message
+        document.getElementById("welcome-msg").textContent = `Welcome, ${currentUser.name}!`;
 
-        // Chart
-        updateLineChart(labels, dataPoints, persona.color);
-        
-        // Dynamic Suggestions
-        const suggestionsBox = document.getElementById('suggestions-list');
-        suggestionsBox.innerHTML = '';
-        const suggestions = [];
-        if (sleep < 7) suggestions.push('Neuro-Optimization: Increase sleep to 7+ hours. Cognitive compound interest requires REM cycles.');
-        if (screen > 5) suggestions.push('Dopamine Detox: Screen overconsumption is dragging down your timeline. Implement app blockers.');
-        if (study < 2) suggestions.push('Skill Deficit: You lack deep work blocks. Even 1 extra hour a day compounds massively over years.');
-        if (consistency === 'low') suggestions.push('System Failure: Erratic output kills positive momentum. Build micro-habits before huge goals.');
-        
-        if (suggestions.length === 0) suggestions.push('Trajectory Optimal: Keep executing. Your timeline metrics are highly favorable.');
-        
-        suggestions.forEach(s => {
-            const li = document.createElement('li');
-            li.textContent = s;
-            suggestionsBox.appendChild(li);
+        // Handle Logout
+        document.getElementById("logout-btn").addEventListener("click", () => {
+            localStorage.removeItem("currentUser");
+            window.location.href = "login.html";
         });
 
-        // Circle Update
-        const circle = document.querySelector('.score-circle');
-        circle.style.background = `conic-gradient(${persona.color} ${finalScore}%, transparent 0%)`;
+        // UI Event Listeners for Slider
+        const hungerSlider = document.getElementById("hunger-slider");
+        const hungerVal = document.getElementById("hunger-val");
+        hungerSlider.addEventListener("input", (e) => {
+            hungerVal.textContent = e.target.value;
+        });
 
-        if (!resultSection.classList.contains('scrolled')) {
-            setTimeout(() => {
-                resultSection.scrollIntoView({ behavior: 'smooth' });
-                resultSection.classList.add('scrolled'); // Only scroll automatically once
-            }, 100);
+        const suggestBtn = document.getElementById("suggest-btn");
+        const swapBtn = document.getElementById("swap-btn");
+        const resultsView = document.getElementById("results-view");
+        
+        let currentSuggestionsPool = [];
+        let currentSuggestionIndex = 0;
+
+        // Generate Suggestion Event
+        suggestBtn.addEventListener("click", () => {
+            const mood = document.getElementById("mood-select").value;
+            const activity = document.getElementById("activity-input").value || "doing your activity";
+            const hunger = parseInt(hungerSlider.value);
+            const time = new Date().getHours();
+
+            // Fetch AI Logic
+            currentSuggestionsPool = generateSuggestions(mood, time, hunger, activity);
+            currentSuggestionIndex = 0;
+            
+            renderSuggestion();
+            resultsView.style.display = "block";
+            // Smooth scroll down to results
+            resultsView.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+
+        // Swap Suggestion Feature
+        swapBtn.addEventListener("click", () => {
+            currentSuggestionIndex = (currentSuggestionIndex + 1) % currentSuggestionsPool.length;
+            renderSuggestion();
+        });
+
+        // Render data to DOM
+        function renderSuggestion() {
+            const data = currentSuggestionsPool[currentSuggestionIndex];
+            
+            document.getElementById("food-suggestion").textContent = data.food;
+            document.getElementById("health-score").textContent = data.score;
+            document.getElementById("reason-text").textContent = data.reason;
+            document.getElementById("avoid-text").textContent = data.avoidMsg;
+            document.getElementById("future-text").textContent = data.consequence;
+            
+            // Adjust score color dynamically based on healthiness
+            const scoreEl = document.getElementById("health-score");
+            if(data.score >= 80) scoreEl.style.color = "var(--primary)";
+            else if(data.score >= 50) scoreEl.style.color = "#d97706"; // warning orange
+            else scoreEl.style.color = "var(--danger)";
         }
-    };
+    }
 
-    const updateLineChart = (labels, data, color) => {
-        const ctx = document.getElementById('lineChart').getContext('2d');
-        if (lineChart) lineChart.destroy();
+    // ==========================================
+    // 4. MOCKED AI LOGIC SYSTEM
+    // ==========================================
+    function generateSuggestions(mood, hour, hunger, activity) {
+        let isLateNight = (hour >= 21 || hour < 5);
+        let timePeriod = isLateNight ? "late night" : "the day time";
 
-        lineChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Success Trajectory',
-                    data: data,
-                    borderColor: color,
-                    backgroundColor: `${color}33`, 
-                    fill: true,
-                    tension: 0.4,
-                    pointRadius: 3,
-                    pointBackgroundColor: color,
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        min: 0,
-                        max: 100,
-                        grid: { color: 'rgba(255,255,255,0.05)' },
-                        ticks: { color: '#94a3b8', font: {size: 10} }
-                    },
-                    x: {
-                        grid: { display: false },
-                        ticks: { color: '#94a3b8', font: {size: 10} }
-                    }
-                },
-                plugins: { legend: { display: false } },
-                animation: { duration: 800 }
-            }
+        // Structured food database by mood
+        const pools = {
+            happy: [
+                { food: "Berry & Yogurt Parfait", score: 92, badFood: "huge sugary dessert" },
+                { food: "Grilled Lemon Chicken Bowl", score: 88, badFood: "greasy fast food burger" }
+            ],
+            stressed: [
+                { food: "Roasted Almonds & Dark Chocolate", score: 75, badFood: "bag of potato chips" },
+                { food: "Avocado Toast with Chili Flakes", score: 85, badFood: "processed donuts" }
+            ],
+            bored: [
+                { food: "Crispy Apple & Peanut Butter", score: 80, badFood: "mindless candy grazing" },
+                { food: "Carrot Sticks & Hummus", score: 86, badFood: "highly processed crackers" }
+            ],
+            tired: [
+                { food: "Oatmeal with Sliced Bananas", score: 90, badFood: "heavy carb-loaded pasta" },
+                { food: "Green Tea & Mixed Nuts", score: 82, badFood: "extreme artificial energy drinks" }
+            ]
+        };
+
+        const moodPool = pools[mood] || pools["happy"];
+        
+        // Map database into user-specific responses using interpolation
+        return moodPool.map(item => {
+            // Apply deductions based on context
+            let scorePenalty = isLateNight ? 5 : 0;
+            scorePenalty += (hunger > 7) ? 5 : 0;
+            let finalScore = Math.max(10, item.score - scorePenalty);
+
+            return {
+                food: item.food,
+                score: finalScore,
+                reason: `Because you're feeling ${mood} while ${activity}, your brain is seeking dopamine. But instead of junk, ${item.food} tricks your brain by providing maximum flavor and satisfaction.`,
+                avoidMsg: `Absolutely avoid grabbing a ${item.badFood}. Eating that during ${timePeriod} will completely derail your digestion and cause a massive crash.`,
+                consequence: `Consistently choosing this over junk builds metabolic resilience, keeps your focus sharp, and regulates your future emotional cravings.`
+            };
         });
-    };
-
-    document.getElementById('predict-btn').addEventListener('click', calculateCompoundEffect);
-    
-    document.getElementById('reset-btn').addEventListener('click', () => {
-        resultSection.classList.add('hidden');
-        resultSection.classList.remove('scrolled');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
+    }
 });

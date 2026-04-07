@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - MoodBite AI</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="dashboard-page">
+    <nav class="navbar">
+        <div class="nav-brand">MoodBite AI 🍏</div>
+        <div class="nav-user">
+            <span id="welcome-msg">Welcome!</span>
+            <button id="logout-btn" class="btn btn-secondary btn-sm">Log Out</button>
+        </div>
+    </nav>
+
+    <main class="container" id="dashboard-container">
+        
+        <div class="card input-card">
+            <h2>How are you feeling right now?</h2>
+            
+            <div class="form-row">
+                <div class="input-group">
+                    <label for="mood-select">Your Mood</label>
+                    <select id="mood-select">
+                        <option value="happy">😊 Happy</option>
+                        <option value="stressed">😫 Stressed</option>
+                        <option value="bored">😴 Bored</option>
+                        <option value="tired">🔋 Tired</option>
+                    </select>
+                </div>
+                
+                <div class="input-group">
+                    <label for="activity-input">Recent Activity</label>
+                    <input type="text" id="activity-input" placeholder="e.g. studying, watching TV...">
+                </div>
+            </div>
+
+            <div class="input-group hunger-group">
+                <label for="hunger-slider">Hunger Level: <span id="hunger-val">5</span>/10</label>
+                <input type="range" id="hunger-slider" min="1" max="10" value="5">
+                <div class="slider-labels">
+                    <span>Just peckish</span>
+                    <span>Starving</span>
+                </div>
+            </div>
+
+            <button id="suggest-btn" class="btn btn-primary btn-large">Get Suggestion ✨</button>
+        </div>
+
+        <div class="results-container" id="results-view" style="display: none;">
+            <div class="card main-suggestion-card">
+                <div class="card-header-flex">
+                    <h3 id="food-suggestion">--</h3>
+                    <div class="score-badge">
+                        <span id="health-score">--</span>
+                        <small>Health Score</small>
+                    </div>
+                </div>
+                
+                <div class="reason-section">
+                    <h4>💡 Why this?</h4>
+                    <p id="reason-text">--</p>
+                </div>
+
+                <div class="avoid-section">
+                    <h4>⚠️ Avoid this</h4>
+                    <p id="avoid-text">--</p>
+                </div>
+
+                <div class="future-section">
+                    <h4>🌱 Future Consequence</h4>
+                    <p id="future-text">--</p>
+                </div>
+
+                <div class="actions">
+                    <button id="swap-btn" class="btn btn-secondary">🔄 Swap Suggestion</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

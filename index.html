@@ -3,111 +3,130 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Future Self Simulator | Neural Engine</title>
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>MoodBite AI - Emotion-Aware Food Coach</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
 </head>
 <body>
-    <div class="background-orbs">
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-        <div class="orb orb-3"></div>
-    </div>
-    
-    <main class="container">
-        <header>
-            <h1>Future Self <span>Simulator</span></h1>
-            <p>Experience the compounding power of your daily habits.</p>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo">
+                <span class="logo-icon">🧠🍽️</span>
+                <h1>MoodBite<span class="ai-badge">AI</span></h1>
+            </div>
+            <p class="subtitle">Your emotion-aware food coach</p>
         </header>
 
-        <div class="app-layout">
-            <section class="glass-card input-section" data-tilt data-tilt-max="2" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.1">
-                <h2>Your Daily Habits</h2>
-                
-                <div class="input-group">
-                    <label for="study">📚 Deep Work / Study (Daily)</label>
-                    <input type="range" id="study" min="0" max="16" value="4" step="0.5">
-                    <div class="val-display"><span id="study-val">4</span> hrs</div>
-                </div>
+        <main class="dashboard">
+            <section class="input-section glass-panel">
+                <h2>How are you feeling?</h2>
 
                 <div class="input-group">
-                    <label for="screen">📱 Distractive Screen Time</label>
-                    <input type="range" id="screen" min="0" max="16" value="5" step="0.5">
-                    <div class="val-display"><span id="screen-val">5</span> hrs</div>
-                </div>
-
-                <div class="input-group">
-                    <label for="sleep">💤 Sleep Recovery</label>
-                    <input type="range" id="sleep" min="0" max="14" value="7" step="0.5">
-                    <div class="val-display"><span id="sleep-val">7</span> hrs</div>
-                </div>
-
-                <div class="input-group">
-                    <label for="consistency">🔄 Habit Consistency</label>
-                    <div class="toggle-group">
-                        <input type="radio" id="cons-low" name="consistency" value="low">
-                        <label for="cons-low">Low</label>
-                        <input type="radio" id="cons-medium" name="consistency" value="medium" checked>
-                        <label for="cons-medium">Med</label>
-                        <input type="radio" id="cons-high" name="consistency" value="high">
-                        <label for="cons-high">High</label>
+                    <label>Your Current Mood</label>
+                    <div class="mood-selector" id="mood-selector">
+                        <button class="mood-btn" data-mood="happy">😊 Happy</button>
+                        <button class="mood-btn" data-mood="stressed">😫 Stressed</button>
+                        <button class="mood-btn" data-mood="bored">😴 Bored</button>
+                        <button class="mood-btn" data-mood="tired">🔋 Tired</button>
                     </div>
                 </div>
 
-                <div class="input-group highlight-group">
-                    <label for="years">⏳ Time Horizon (Years)</label>
-                    <input type="range" id="years" min="1" max="10" value="1" step="1">
-                    <div class="val-display"><span id="years-val">1</span> year(s) from now</div>
-                    <small class="hint-text">See how habits compound over time!</small>
-                </div>
-
-                <button id="predict-btn" class="glow-btn">Simulate My Future</button>
-            </section>
-
-            <section class="glass-card result-section hidden" id="result-section" data-tilt data-tilt-max="1" data-tilt-speed="400">
-                <div class="ai-header">
-                    <h2>Neural Prediction Engine</h2>
-                    <span class="ai-status">System Active</span>
-                </div>
-                
-                <div class="persona-card" id="persona-card">
-                    <div class="persona-header">
-                        <span class="persona-badge" id="persona-badge">Analyzing...</span>
-                        <h3 id="persona-name">Generating Profile...</h3>
-                    </div>
-                    <p id="persona-desc" class="typing-effect">Please wait, compiling temporal data...</p>
-                </div>
-
-                <div class="score-container">
-                    <div class="score-circle">
-                        <span id="final-score">0</span>
-                        <span class="score-label">Future Score</span>
-                    </div>
-                    <div class="charts-wrapper" style="flex: 1;">
-                        <div class="chart-box">
-                            <canvas id="lineChart" height="150"></canvas>
+                <div class="input-group row-group">
+                    <div class="half-width">
+                        <label>Time of Day (Auto-detected)</label>
+                        <div class="auto-detect-box" id="time-display">
+                            Detecting...
                         </div>
                     </div>
+                    <div class="half-width">
+                        <label>Recent Activity</label>
+                        <select id="activity-selector" class="custom-select">
+                            <option value="working at your desk">Working at desk</option>
+                            <option value="studying heavily">Studying heavily</option>
+                            <option value="finishing a workout">Post-Workout</option>
+                            <option value="binge watching shows">Watching a show</option>
+                        </select>
+                    </div>
                 </div>
 
-                <div class="suggestions-box">
-                    <h3>💡 AI Intervention Strategy</h3>
-                    <ul id="suggestions-list">
-                        <!-- Populated by JS -->
-                    </ul>
+                <div class="input-group">
+                    <label>Hunger Level: <span id="hunger-value" class="highlight-text">5</span>/10</label>
+                    <input type="range" id="hunger-slider" min="1" max="10" value="5" class="slider">
+                    <div class="slider-labels">
+                        <span>Just peckish (1)</span>
+                        <span>Starving (10)</span>
+                    </div>
                 </div>
-                
-                <button id="reset-btn" class="secondary-btn">Recalibrate Variables</button>
+
+                <button id="generate-btn" class="primary-btn">Generate Food Strategy 🪄</button>
             </section>
-        </div>
-    </main>
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
+
+            <div class="results-layout" style="display: none;" id="results-container">
+                <section class="suggestion-section glass-panel highlight-panel">
+                    <div class="card-header">
+                        <h2>✨ Smart Suggestion</h2>
+                        <div class="craving-badge" id="craving-prediction">Predicting Cravings...</div>
+                    </div>
+
+                    <div class="suggestion-card" id="main-suggestion">
+                        <div class="food-info">
+                            <h3 id="food-name">Loading...</h3>
+                            <div class="health-score-container">
+                                <svg class="score-circle" viewBox="0 0 36 36">
+                                    <path class="circle-bg"
+                                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                                    />
+                                    <path class="circle-stroke" id="score-stroke" stroke-dasharray="0, 100"
+                                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                                    />
+                                    <text x="18" y="20.35" class="score-text" id="health-score">--</text>
+                                </svg>
+                                <span>Health Score</span>
+                            </div>
+                        </div>
+
+                        <div class="reason-box">
+                            <h4>Why this suggestion?</h4>
+                            <p id="suggestion-reason">Analyzing your state...</p>
+                        </div>
+
+                        <div class="future-impact">
+                            <h4>🌱 Future Impact</h4>
+                            <p id="future-impact-msg">...</p>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="side-panel">
+                    <section class="alternative-section glass-panel" style="margin-bottom: 1.5rem;">
+                        <h2>Better Alternative</h2>
+                        <p class="alt-subtitle">Instead of falling for your craving, try this compromise:</p>
+                        <div class="alt-card" id="alt-suggestion">
+                            <h3 id="alt-food-name">Loading...</h3>
+                            <p id="alt-reason">...</p>
+                        </div>
+                    </section>
+
+                    <section class="info-section glass-panel">
+                        <h2>📊 AI Scoring System</h2>
+                        <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5;">
+                            Score = Base Nutrition - Junk Tendency.<br>
+                            Your <strong>Junk Tendency</strong> increases with high hunger, negative moods, and late times of day. Our AI bridges the gap between your emotional cravings and physical needs.
+                        </p>
+                    </section>
+                </div>
+
+                <section class="map-section glass-panel full-width">
+                    <h2>🧠 Mood-to-Food Map</h2>
+                    <p class="map-desc">Discover the psychological flow of your current appetite.</p>
+                    <div class="mood-map-visual" id="mood-map-visual">
+                        <!-- Dynamic visual elements will be injected here -->
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
     <script src="script.js"></script>
 </body>
 </html>
